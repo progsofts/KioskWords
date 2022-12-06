@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+def incVersionCode() {
+    return new Date().format("1.YYYYMMdd.HHmm", TimeZone.getTimeZone("GMT+8"))
+}
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        applicationId "com.progsoft.device_owner"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName incVersionCode()
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    namespace 'com.progsoft.device_owner'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.biometric:biometric:1.0.1'
+    //noinspection GradleDependency
+    testImplementation 'junit:junit:4.13'
+    //noinspection GradleDependency
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}
