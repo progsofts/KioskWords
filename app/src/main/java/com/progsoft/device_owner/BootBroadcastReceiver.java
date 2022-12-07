@@ -10,17 +10,15 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 public class BootBroadcastReceiver extends BroadcastReceiver {
-    private static String TAG = "BootBroadcastReceiver";
-    private static Intent mIntent = null;
+    private static final String TAG = "BootBroadcastReceiver";
+    private static final Intent mIntent = null;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, MyService.class);
         context.startForegroundService(service);
 
-        if (mIntent == null) {
-            Log.e(TAG, "new intent:" + mIntent);
-        }
+        Log.e(TAG, "new intent:" + mIntent);
 
         String action = intent.getAction();
         Log.e(TAG, "" + intent);
@@ -30,18 +28,18 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
                 || action.equals("android.intent.action.SIM_STATE_CHANGED")) {
             Log.e(TAG, "Call in changed!");
             Bundle bundle = intent.getExtras();
-            //String phonenumber = bundle.getString("android.intent.extra.PHONE_NUMBER");
-            String phonenumber = bundle.getString("incoming_number");
+            //String phone-number = bundle.getString("android.intent.extra.PHONE_NUMBER");
+            String phoneNumber = bundle.getString("incoming_number");
             String state = bundle.getString("state");
 
             if ("IDLE".equals(state)) {
-                if (phonenumber != null && phonenumber.equals("13590485482")) {
+                if (phoneNumber != null && phoneNumber.equals("10086")) {
                     KioskModeApp.setIsSupperMode(!KioskModeApp.isIsSupperMode());
                 }
             }
-            Log.e(TAG, "state:" + state + " number:" + phonenumber + " mode:" + KioskModeApp.isIsSupperMode() + " " + bundle.toString());
+            Log.e(TAG, "state:" + state + " number:" + phoneNumber + " mode:" + KioskModeApp.isIsSupperMode() + " " + bundle);
             /*
-            for (String key:bundle.keySet()) {
+             * for (String key:bundle.keySet()) {
                 Log.e(TAG, "key=" + key + " content=" + bundle.getString(key));
             }
              */

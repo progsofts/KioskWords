@@ -31,36 +31,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-/**
- * Created by derohimat on 19/08/2016.
- */
 public class SecondActivity extends BaseActivity implements View.OnClickListener {
-    private static String TAG = "PROG_SecondActivity";
-    List<itemInfo> list = new ArrayList<itemInfo>();
-    List<itemInfo> alist = new ArrayList<itemInfo>();
-    List<itemInfo> tiku = new ArrayList<itemInfo>();
+    private static final String TAG = "PROG_SecondActivity";
+    List<itemInfo> list = new ArrayList<>();
+    List<itemInfo> alist = new ArrayList<>();
+    List<itemInfo> tiku = new ArrayList<>();
     long nowti = 0;
     long count = 0;
     MarkAdapter adapter, adapter2;
     TextView question, tinum;
 
     private void ReadTextFile() {
-        itemInfo info = null;
+        itemInfo info;
         File file = new File(Environment.getExternalStorageDirectory(), "progsoft/db/3.txt");
         try {
             InputStream inputStream = new FileInputStream(file);
             if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    String ls[] = line.split("-");
+                    String[] ls = line.split("-");
                     if (ls.length == 2) { //输入模式，只用输入题目和答案
                         info = new itemInfo(ls[0], ls[1], "FGH", 0, 0, 0, Color.TRANSPARENT);
                         tiku.add(info);
@@ -85,7 +83,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
     }
 
     @SuppressLint("NewApi")
-    public boolean WriteTextFile() {
+    public void WriteTextFile() {
         try {
             File file = new File(Environment.getExternalStorageDirectory(), "progsoft/db/3.txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
@@ -105,10 +103,8 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
             }
             bw.flush();
             bw.close();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
@@ -127,8 +123,8 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void init_tiku() {
-        itemInfo info = null;
-        itemInfo info2 = null;
+        itemInfo info;
+        itemInfo info2;
         String keyboard = "QWERTYUIOPASDFGHJKL  ZXCVBNM  qwertyuiopasdfghjkl! zxcvbnm?.";
         list.clear();
         alist.clear();
@@ -165,7 +161,6 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
 
         setUpAdmin();
 
-        int oldv = -1;
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerView recyclerView2 = findViewById(R.id.rv_list);
         init_tiku();
@@ -176,11 +171,11 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
 
         Configuration mConfiguration = this.getResources().getConfiguration();
         int ori = mConfiguration.orientation;
-        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             GridLayoutManager linearLayoutManager = new GridLayoutManager(this ,28);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView2.setLayoutManager(new GridLayoutManager(this ,28));
-        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             GridLayoutManager linearLayoutManger = new GridLayoutManager(this, 14);
             recyclerView.setLayoutManager(linearLayoutManger);
             recyclerView2.setLayoutManager(new GridLayoutManager(this ,10));
@@ -194,53 +189,46 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
         adapter.oldv = 0;
         adapter.setBColor(Color.YELLOW);
 
-        adapter.setOnClickListener(new MarkAdapter.OnTextClickLister() {
-            @Override
-            public void onClick(View v, int postion) {
-                if (v instanceof TextView) {
-                    Double r = Math.random();
-                    String nStr = "" + (char)(r * 26 + 64);
-                    if (adapter.oldv != -1) {
-                        adapter.setBColor(Color.TRANSPARENT);
-                    }
-                    /*
-                    if (postion == 0) {
-                        KioskModeApp.setIsInLockMode(false);
-
-                    }
-                     */
-                    adapter.oldv = postion;
-                    //adapter.changeData(postion, nStr);
-                    adapter.setBColor(Color.YELLOW);
-                } else {
-                    Log.e(TAG, "adapter.setOnClickListener View:" + v + " Pos:" + postion);
+        adapter.setOnClickListener((v, postion) -> {
+            if (v instanceof TextView) {
+                double r = Math.random();
+                String nStr = "" + (char)(r * 26 + 64);
+                if (adapter.oldv != -1) {
+                    adapter.setBColor(Color.TRANSPARENT);
                 }
-
+                /*
+                if (postion == 0) {
+                    KioskModeApp.setIsInLockMode(false);
+                }
+                 */
+                adapter.oldv = postion;
+                //adapter.changeData(postion, nStr);
+                adapter.setBColor(Color.YELLOW);
+            } else {
+                Log.e(TAG, "adapter.setOnClickListener View:" + v + " Pos:" + postion);
             }
+
         });
 
-        adapter2.setOnClickListener(new MarkAdapter.OnTextClickLister() {
-            @Override
-            public void onClick(View v, int postion) {
-                if (v instanceof TextView) {
-                    String nStr = list.get(postion).question;
-                    if (adapter.oldv != -1) {
-                        adapter.setBColor(Color.TRANSPARENT);
-                    }
-                    /*
-                    if (postion == 0) {
-                        KioskModeApp.setIsInLockMode(false);
-
-                    }
-                     */
-                    adapter.changeData(adapter.oldv, nStr);
-                    adapter.oldv++;
-                    adapter.setBColor(Color.YELLOW);
-                } else {
-                    Log.e(TAG, "adapter2.setOnClickListener View:" + v + " Pos:" + postion);
+        adapter2.setOnClickListener((v, postion) -> {
+            if (v instanceof TextView) {
+                String nStr = list.get(postion).question;
+                if (adapter.oldv != -1) {
+                    adapter.setBColor(Color.TRANSPARENT);
                 }
+                /*
+                if (postion == 0) {
+                    KioskModeApp.setIsInLockMode(false);
 
+                }
+                 */
+                adapter.changeData(adapter.oldv, nStr);
+                adapter.oldv++;
+                adapter.setBColor(Color.YELLOW);
+            } else {
+                Log.e(TAG, "adapter2.setOnClickListener View:" + v + " Pos:" + postion);
             }
+
         });
         count = 0;
         updateTimu();

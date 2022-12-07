@@ -13,7 +13,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -28,7 +27,6 @@ import java.util.Date;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class MyService extends Service {
-    private static Thread mThread = null;
     int mNotificationId = 1;
     int mGPSInfoId = 2;
     String channelId = "my_chn_01";
@@ -44,14 +42,7 @@ public class MyService extends Service {
     private static final int RUNNABLE_INTERVAL = 5000;
     private static final int DEFAULT_DELAY_TIME = 5;
 
-    private Runnable runnable;
-    private Handler handler;
-    long mLTEStauts = 0;
-
-    int num = 0;
-    int func = 0;
-
-    public boolean FileWrite(String context) {
+    public void FileWrite(String context) {
         try {
             String newTitle = "";
             File file = new File(Environment.getExternalStorageDirectory(), "progsoft/log/Thread.txt");
@@ -65,10 +56,8 @@ public class MyService extends Service {
             bw.flush();
             bw.close();
             Log.e(TAG, context);
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
@@ -88,7 +77,7 @@ public class MyService extends Service {
         super.onCreate();
         FileWrite("MyService onCreate");
 
-        mNotificationManager =(NotificationManager)getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        mNotificationManager =(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O) {
             CharSequence name = "GPS服务通知";
             String description = "不知道在哪里显示的内容？";
@@ -141,10 +130,6 @@ public class MyService extends Service {
         FileWrite("MyService onDestroy");
     }
 
-    private void initializeLocationManager() {
-        FileWrite("MyService initializeLocationManager");
-    }
-
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
@@ -182,7 +167,7 @@ public class MyService extends Service {
         }
     }
 
-    private LocationListener[] mLocationListeners = new LocationListener[] {
+    private final LocationListener[] mLocationListeners = new LocationListener[] {
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };

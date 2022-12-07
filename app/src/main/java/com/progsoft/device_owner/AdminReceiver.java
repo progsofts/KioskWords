@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-/**
- * Created by derohimat on 19/08/2016.
- */
 public class AdminReceiver extends DeviceAdminReceiver {
-
     @Override
     public void onEnabled(Context context, Intent intent) {
         Toast.makeText(context, context.getString(R.string.device_admin_enabled), Toast.LENGTH_SHORT).show();

@@ -14,21 +14,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 
-/**
- * Created by derohimat on 19/08/2016.
- */
 public class BaseActivity extends AppCompatActivity {
-    private static String TAG = "PROG_BaseActivity";
+    private static final String TAG = "PROG_BaseActivity";
     protected Context mContext = this;
     protected View mDecorView;
     protected static DevicePolicyManager mDpm;
-
-    protected void reportAnswer(String str) {
-        ComponentName componentName = new ComponentName(mContext, AdminReceiver.class);
-        if (str.equals("hello")) {
-            enableKioskMode(false);
-        }
-    }
 
     protected void setUpAdmin() {
         mDpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -40,7 +30,7 @@ public class BaseActivity extends AppCompatActivity {
                 //Log.e("Kiosk Mode Error", getString(R.string.not_device_admin));
             }
 
-            if (false || mDpm.isDeviceOwnerApp(getPackageName())) {
+            if (mDpm.isDeviceOwnerApp(getPackageName())) {
                 mDpm.setLockTaskPackages(deviceAdmin, new String[]{getPackageName()});
             } else {
                 FileWrite("enableKioskMode Error " + getString(R.string.not_device_owner));
@@ -58,7 +48,7 @@ public class BaseActivity extends AppCompatActivity {
         hideSystemUI();
     }
 
-    public boolean FileWrite(String context) {
+    public void FileWrite(String context) {
         try {
             String newTitle = "";
             File file = new File(Environment.getExternalStorageDirectory(), "progsoft/log/Thread.txt");
@@ -72,10 +62,8 @@ public class BaseActivity extends AppCompatActivity {
             bw.flush();
             bw.close();
             Log.e(TAG, context);
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 

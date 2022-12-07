@@ -3,8 +3,6 @@ package com.progsoft.device_owner;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,28 +10,22 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Date;
 
-/**
- * Created by derohimat on 19/08/2016.
- */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private Button mBtnState, mBtnMove, mBtnCamera;
-    private TextView mTV, mLT;
+    private Button mBtnState;
+    private Button mBtnCamera;
+    private TextView mLT;
     private EditText mET, mET2;
     private static Thread mThread = null;
 
 
-    class MyRunnalbe implements Runnable {
+    class MyRunnable implements Runnable {
         @Override
         public void run() {
             int DEFAULT_DELAY = 3;
             do {
-                Date date = new Date();
                 checkDpm();
                 int k = KioskModeApp.getTimeToLock();
                 if (k % 5 == 1 || k < 6) {
@@ -114,9 +106,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
 
         mBtnState = findViewById(R.id.btnState);
-        mBtnMove = findViewById(R.id.btnMove);
+        Button mBtnMove = findViewById(R.id.btnMove);
         mBtnCamera = findViewById(R.id.btmCamera);
-        mTV = findViewById(R.id.textView);
+        TextView mTV = findViewById(R.id.textView);
         mLT = findViewById(R.id.LastTime);
         mET = findViewById(R.id.editTextTextPersonName);
 
@@ -139,18 +131,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         checkDpm();
         if (mThread == null) {
-            FileWrite("MainActivity MyRunable, mThread null. " + this);
+            FileWrite("MainActivity MyRunnable, mThread null. " + this);
         } else {
-            FileWrite("MainActivity MyRunable:" + mThread.isAlive());
+            FileWrite("MainActivity MyRunnable:" + mThread.isAlive());
             mThread.interrupt();
             mThread = null;
         }
 
         if (mThread == null || !mThread.isAlive()) {
-            MyRunnalbe run = new MyRunnalbe();
+            MyRunnable run = new MyRunnable();
             mThread = new Thread(run, "Timer Thread");
             mThread.start();
-            FileWrite("MainActivity MyRunable New Thread. " + this);
+            FileWrite("MainActivity MyRunnable New Thread. " + this);
         }
         if (KioskModeApp.isIsSupperMode())
             finish();

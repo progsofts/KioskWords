@@ -9,14 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
-/**
- * Created by Thinkpad on 2018/7/5.
- * 码云
- */
 
 public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MyHolder>{
 
@@ -44,24 +40,18 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MyHolder>{
      */
     class MyHolder extends RecyclerView.ViewHolder{
         TextView questionTv;
-        TextView youAnswerTv;
         TextView answerTv;
         public MyHolder(View itemView) {
             super(itemView);
             questionTv = itemView.findViewById(R.id.item_question);
             //youAnswerTv = itemView.findViewById(R.id.item_youranswer);
             //answerTv = itemView.findViewById(R.id.item_answer);
-            questionTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (v instanceof TextView) {
-                        Log.e("setOnClickListener", "Pos: " + getAdapterPosition() + " View:" + ((TextView)v).getText() + v);
-                    } else {
-
-                    }
-                    if (mOnClickListener != null) {
-                        mOnClickListener.onClick(v, getAdapterPosition());
-                    }
+            questionTv.setOnClickListener(v -> {
+                if (v instanceof TextView) {
+                    Log.e("setOnClickListener", "Pos: " + getAdapterPosition() + " View:" + ((TextView)v).getText() + v);
+                }
+                if (mOnClickListener != null) {
+                    mOnClickListener.onClick(v, getAdapterPosition());
                 }
             });
         }
@@ -71,6 +61,7 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MyHolder>{
      * 用这个方法导入布局文件并创建View holder
      *
      */
+    @NonNull
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).
@@ -82,8 +73,8 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MyHolder>{
 
     /**
      * 在这里操作item
-     * @param holder
-     * @param position
+     * @param holder holder
+     * @param position position
      */
     @Override
     public void onBindViewHolder(MyHolder holder, final int position) {
