@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import androidx.biometric.BiometricPrompt;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -224,6 +224,8 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                  */
                 adapter.changeData(adapter.oldv, nStr);
                 adapter.oldv++;
+                if (adapter.oldv >= adapter.list.size())
+                    adapter.oldv = adapter.list.size() - 1;
                 adapter.setBColor(Color.YELLOW);
             } else {
                 Log.e(TAG, "adapter2.setOnClickListener View:" + v + " Pos:" + postion);
@@ -330,15 +332,21 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
             for (int i = 0; i < adapter.list.size(); i++)
                 s = s + adapter.list.get(i).question;
             s = s.trim() + adapter.list.get(14).question;
-            if ("".equals(s))
+            if (true && ("".equals(s)))
                 return;
             FileWrite("SecondActivity Print:" + adapter.list.size() + ":" + s);
-            if ("quit".equals(s)) {
+            if ("exit".equals(s) || "".equals(s)) {
+                for (int i = 0; i < 28; i++) {
+                    adapter.changeData(i, "");
+                    adapter.setBColor(Color.TRANSPARENT);
+                    adapter.oldv = 0;
+                }
                 enableKioskMode(false);
                 //KioskModeApp.setIsInLockMode(false);
                 KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6);
                 finish();
                 moveTaskToBack(true);
+                return;
             }
 
             itemInfo info = tiku.get((int) nowti);

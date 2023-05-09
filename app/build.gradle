@@ -8,6 +8,7 @@ android {
     defaultConfig {
         applicationId "com.progsoft.device_owner"
         minSdkVersion 21
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
         versionCode 1
         versionName incVersionCode()

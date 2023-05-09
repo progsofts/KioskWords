@@ -1,8 +1,12 @@
 package com.progsoft.device_owner;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +36,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     FileWrite("Count:" + k);
                 }
                 updateButtonState();
+                // 由于健康使用过手机时间超时所以没有锁定屏幕成功，但是已经进入锁定模式true
+                // 所以k一直没设置为10，无法进入下面isTimeToLock去--操作，也就没有count打印，也无法再次设置
+                // 重启界面的interrupt exit1.2 exit3是老线程关闭打印， ****终止了也没法改变锁定状态****
                 if (!KioskModeApp.isInLockMode()) {
                     if (KioskModeApp.isTimeToLock()) {
                         /*
@@ -104,6 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //requestPermission();
 
         mBtnState = findViewById(R.id.btnState);
         Button mBtnMove = findViewById(R.id.btnMove);
@@ -112,7 +120,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mLT = findViewById(R.id.LastTime);
         mET = findViewById(R.id.editTextTextPersonName);
 
-        mTV.setText("PC-VER:" + BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_TYPE);
+        mTV.setText("PC-VER:" + BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_TYPE + " (" + BuildConfig.APPLICATION_ID  + ")");
 
         mET2 = findViewById(R.id.min);
         mET2.setText("" + KioskModeApp.getMin());
@@ -149,14 +157,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void updateButtonState() {
-        if (KioskModeApp.isInLockMode()) {
-            mBtnState.setText("Disable Kiosk Mode");
-        } else {
-            mBtnState.setText("Enable Kiosk Mode");
-        }
-        mBtnCamera.setText("Time to Lock:" + KioskModeApp.getTimeToLock() * 3 + "s");
-        mET.setText("" + KioskModeApp.getLastTimeLocked());
-        mLT.setText("" + KioskModeApp.getLastTimeLocked());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (KioskModeApp.isInLockMode()) {
+                    mBtnState.setText("Disable Kiosk Mode");
+                } else {
+                    mBtnState.setText("Enable Kiosk Mode");
+                }
+                mBtnCamera.setText("Time to Lock:" + KioskModeApp.getTimeToLock() * 3 + "s");
+                mET.setText("" + KioskModeApp.getLastTimeLocked());
+                mLT.setText("" + KioskModeApp.getLastTimeLocked());
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -188,5 +201,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             //startForegroundService(service);
 
         }
+    }
+    private static final int REQUEST_CODE = 1024;
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //先判断有没有权限
+            if (Environment.isExternalStorageManager()) {
+                writeFile();
+            } else {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + this.getPackageName()));
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        }
+    }
+    /**
+     * 模拟文件写人
+     */
+    private void writeFile() {
+        Log.e("aaaa", "写入文件成功");
     }
 }

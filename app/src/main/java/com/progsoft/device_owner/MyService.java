@@ -94,7 +94,7 @@ public class MyService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Log.e(TAG,"huang: "+notificationIntent);
-        mBuilder.setSmallIcon(R.drawable.ic_launcher_background)
+        mBuilder.setSmallIcon(R.mipmap.words)
                 .setContentTitle("GPS服务 " + mNotificationId).setContentText("服务已经开启...")
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent);

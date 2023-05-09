@@ -21,7 +21,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
         Log.e(TAG, "new intent:" + mIntent);
 
         String action = intent.getAction();
-        Log.e(TAG, "" + intent);
+        Log.e(TAG, action + "***" + intent);
 
         if (action.equals("android.intent.action.PHONE_STATE")
                 || action.equals("android.intent.action.NEW_OUTGOING_CALL")
