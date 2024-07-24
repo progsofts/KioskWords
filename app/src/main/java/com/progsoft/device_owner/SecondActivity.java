@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.progsoft.device_owner.iflytek.TtsDemo;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -94,7 +96,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                 }
             });
             int count = 0;
-            bw.write("题库系统，最后更新时间\n" + new Date() + "\n输入格式：\n1.题目+答案\n2.序号+题目+答案+答题次数+正确+等级\n=======================");
+            bw.write("题库系统，最后更新时间\n" + new Date() + "\n输入格式：\n1.题目+答案\n2.序号+题目+答案+答题次数+正确+等级+最大等级\n=======================");
             bw.newLine();
             for (itemInfo info: tiku) {
                 bw.write(count + "-" + info.question + "-" + info.answer + "-" + info.total + "-" + info.right + "-" + info.weight + "-" + info.max);
@@ -146,6 +148,8 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         FileWrite("SecondActivity onCreate:" + this);
         setContentView(R.layout.activity_second);
+
+        TtsDemo.getInstance(getApplicationContext()).playText("开始测验");
 
         Button btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(this);
@@ -236,6 +240,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
         updateTimu();
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateTimu() {
         itemInfo info;
         double []weight = {0.0d, 0.0d, 0.6d, 0.75d, 0.88d, 0.90d, 0.93d, 0.96d, 0.98d, 0.99d, 0.995d};
@@ -299,7 +304,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                     public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
                         enableKioskMode(false);
-                        KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6);
+                        KioskModeApp.addTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6); // 指纹 增加 30分钟
                         //KioskModeApp.setIsInLockMode(false);
                         WriteTextFile();
                         FileWrite("SecondActivity Finger Succ");
@@ -335,7 +340,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
             if (true && ("".equals(s)))
                 return;
             FileWrite("SecondActivity Print:" + adapter.list.size() + ":" + s);
-            if ("exit".equals(s) || "".equals(s)) {
+            if ("exit".equals(s) || "hqy".equals(s) || "qwer".equals(s) || s.isEmpty()) {
                 for (int i = 0; i < 28; i++) {
                     adapter.changeData(i, "");
                     adapter.setBColor(Color.TRANSPARENT);
@@ -343,7 +348,20 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                 }
                 enableKioskMode(false);
                 //KioskModeApp.setIsInLockMode(false);
-                KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6);
+                switch (s) {
+                    case "exit":
+                        KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 2); // exit 只给10分钟
+                        break;
+                    case "hqy":
+                        KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6); // hqy 给30分钟
+                        break;
+                    case "qwer":
+                        KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 60); // qwer 给5个小时
+                        break;
+                    default:
+                        KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN / 5); // 空 给1分钟
+                        break;
+                }
                 finish();
                 moveTaskToBack(true);
                 return;
@@ -358,12 +376,14 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                 }
                 //作对题量8题或20题, 或者做两倍以上题量
                 int testNum = KioskModeApp.getTestNum();
-                if  ((testNum > 0 && (count >= 2 * testNum || KioskModeApp.RightNum >= testNum))
+                if  ((testNum > 0 && (count >= 2L * testNum || KioskModeApp.RightNum >= testNum))
                     || (testNum == 0) && (count > KioskModeApp.getMax() - KioskModeApp.getMin())){
                     enableKioskMode(false);
                     //KioskModeApp.setIsInLockMode(false);
-                    KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 3);
                     WriteTextFile();
+                    KioskModeApp.addTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 3); // 做题加15分钟
+                    int left = (KioskModeApp.getTimeToLock() * 3) / 60;
+                    TtsDemo.getInstance(getApplicationContext()).playText("已经累计" + left + "分钟");
                     finish();
                     moveTaskToBack(true);
                 } else {
@@ -399,7 +419,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                         public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                             super.onAuthenticationSucceeded(result);
                             enableKioskMode(false);
-                            KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6);
+                            KioskModeApp.addTimeToLock(KioskModeApp.LOCK_TIME_10MIN * 6); // 指纹 增加30分钟
                             //KioskModeApp.setIsInLockMode(false);
                             FileWrite("SecondActivity Finger Succ");
                             Toast.makeText(SecondActivity.this, "Login Successful !!!!", Toast.LENGTH_SHORT).show();

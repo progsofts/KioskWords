@@ -67,25 +67,25 @@ public class itemInfo implements Serializable{
         return weight;
     }
 
-    public itemInfo(String question,String answer,String yourAnswer, int x, int y, int z,@ColorInt int c){
+    public itemInfo(String question,String answer,String yourAnswer, int total, int right, int weight,@ColorInt int c){
         this.question = question;
         this.answer = answer;
         this.yourAnswer = yourAnswer;
-        this.total = x;
-        this.right = y;
-        this.weight = z;
+        this.total = total;
+        this.right = right;
+        this.weight = weight;
         this.color = c;
         this.number = 0;
         this.max = 0;
     }
 
-    public itemInfo(int number, String question,String answer,String yourAnswer, int x, int y, int z, int max, @ColorInt int c){
+    public itemInfo(int number, String question,String answer,String yourAnswer, int total, int right, int weight, int max, @ColorInt int c){
         this.question = question;
         this.answer = answer;
         this.yourAnswer = yourAnswer;
-        this.total = x;
-        this.right = y;
-        this.weight = z;
+        this.total = total;
+        this.right = right;
+        this.weight = weight;
         this.color = c;
         this.number = number;
         this.max = max;

@@ -2,14 +2,16 @@ package com.progsoft.device_owner;
 
 import android.app.Application;
 
+import com.progsoft.device_owner.iflytek.TtsDemo;
+
 public class KioskModeApp extends Application {
 
     public static boolean isInLockMode;
     public static boolean isSupperMode = false;
     public static int timeToLock = 10;
     public static String lastTimeLocked = "None";
-    public static int LOCK_TIME_10MIN = 100;
-    public static int TestNum = 5;
+    public static int LOCK_TIME_10MIN = 100; // 100 = 5分钟，  200 = 10分钟
+    public static int TestNum = 12; // 默认做12题
     public static int RightNum = 0;
     public static int min = 0, max = 90;
     public static int level = 10;
@@ -71,6 +73,11 @@ public class KioskModeApp extends Application {
 
     public static void setTimeToLock(int l) {
         KioskModeApp.timeToLock = l;
+    }
+
+    public static void addTimeToLock(int l) {
+        KioskModeApp.timeToLock += l;
+
     }
 
     public static boolean isTimeToLock() {

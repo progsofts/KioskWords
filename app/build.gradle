@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 def incVersionCode() {
-    return new Date().format("1.YYYYMMdd.HHmm", TimeZone.getTimeZone("GMT+8"))
+    return "Home." + new Date().format("YYYYMMdd.HHmm", TimeZone.getTimeZone("GMT+8"))
 }
 android {
     compileSdkVersion 30
@@ -20,6 +20,12 @@ android {
         }
     }
     namespace 'com.progsoft.device_owner'
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {

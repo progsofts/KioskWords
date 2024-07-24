@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">背单词</string>
+
+    <string name="app_id">yourid</string>
+
     <!--Kiosk Mode-->
     <string name="device_admin_enabled">Device Admin enabled</string>
     <string name="device_admin_warning">Warning: Device Admin is going to be disabled.</string>
