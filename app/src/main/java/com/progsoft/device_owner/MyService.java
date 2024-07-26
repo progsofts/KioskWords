@@ -45,7 +45,7 @@ public class MyService extends Service {
     public void FileWrite(String context) {
         try {
             String newTitle = "";
-            File file = new File(Environment.getExternalStorageDirectory(), "progsoft/log/Thread.txt");
+            File file = new File(Environment.getExternalStorageDirectory(), "progsoft/Kiosk/service_gps.txt");
             if (!file.exists()) {
                 newTitle = "开启新的一天，加油吧\n";
             }

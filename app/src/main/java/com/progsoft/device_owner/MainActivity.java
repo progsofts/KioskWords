@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         }
                          */
                         //KioskModeApp.setTimeToLock(5);
-                        KioskModeApp.setTestNum(12);
+                        KioskModeApp.setTestNum(KioskModeApp.getTestNum());
                         Intent intent2 = new Intent(getApplicationContext(), SecondActivity.class);
                         intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(intent2);
@@ -294,6 +294,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 mET2 = findViewById(R.id.number);
                 mET2.setText("" + KioskModeApp.getTestNum());
+                KioskModeApp.setTestNum(KioskModeApp.getTestNum());
             }
             SecondActivity.startThisActivity(mContext);
         } else if (view.getId() == R.id.btmCamera) {

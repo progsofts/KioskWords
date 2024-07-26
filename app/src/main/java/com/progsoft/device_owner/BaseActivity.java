@@ -51,7 +51,15 @@ public class BaseActivity extends AppCompatActivity {
     public void FileWrite(String context) {
         try {
             String newTitle = "";
-            File file = new File(Environment.getExternalStorageDirectory(), "progsoft/log/Thread.txt");
+            File file;
+            if (context.contains("SecondActivity")) {
+                file = new File(Environment.getExternalStorageDirectory(), "progsoft/Kiosk/exam.txt");
+            } else {
+                file = new File(Environment.getExternalStorageDirectory(), "progsoft/Kiosk/log.txt");
+            }
+            String directory = file.toString().substring(0, file.toString().lastIndexOf("/"));
+            new File(directory).mkdir();
+
             if (!file.exists()) {
                 newTitle = "开启新的一天，加油吧\n";
             }

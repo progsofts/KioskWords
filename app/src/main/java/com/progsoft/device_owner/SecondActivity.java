@@ -45,14 +45,15 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
     List<itemInfo> list = new ArrayList<>();
     List<itemInfo> alist = new ArrayList<>();
     List<itemInfo> tiku = new ArrayList<>();
+    List<itemInfo> pwds = new ArrayList<>();
     long nowti = 0;
     long count = 0;
     MarkAdapter adapter, adapter2;
     TextView question, tinum;
 
-    private void ReadTextFile() {
+    private void ReadTextFile(List<itemInfo> dataBase, String filePath) {
         itemInfo info;
-        File file = new File(Environment.getExternalStorageDirectory(), "progsoft/db/3.txt");
+        File file = new File(Environment.getExternalStorageDirectory(), filePath);
         try {
             InputStream inputStream = new FileInputStream(file);
             if (inputStream != null) {
@@ -63,11 +64,11 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                     String[] ls = line.split("-");
                     if (ls.length == 2) { //输入模式，只用输入题目和答案
                         info = new itemInfo(ls[0], ls[1], "FGH", 0, 0, 0, Color.TRANSPARENT);
-                        tiku.add(info);
+                        dataBase.add(info);
                     } else if (ls.length == 7) { //正常模式+max
                         info = new itemInfo(Integer.parseInt(ls[0]), ls[1], ls[2], "FGH",
                                 Integer.parseInt(ls[3]),Integer.parseInt(ls[4]),Integer.parseInt(ls[5]), Integer.parseInt(ls[6]), Color.TRANSPARENT);
-                        tiku.add(info);
+                        dataBase.add(info);
                     }
                 }
                 inputStream.close();
@@ -87,7 +88,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
     @SuppressLint("NewApi")
     public void WriteTextFile() {
         try {
-            File file = new File(Environment.getExternalStorageDirectory(), "progsoft/db/3.txt");
+            File file = new File(Environment.getExternalStorageDirectory(), "progsoft/Kiosk/3.txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
             tiku.sort(new Comparator<itemInfo>() {
                 @Override
@@ -131,6 +132,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
         list.clear();
         alist.clear();
         tiku.clear();
+        pwds.clear();
 
         for (int i = 0; i < 60; i++) {
             info = new itemInfo(keyboard.substring(i, i + 1),"CDE", "FGH", Color.TRANSPARENT);
@@ -140,7 +142,8 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                 alist.add(info2);
             }
         }
-        ReadTextFile();
+        ReadTextFile(tiku, "progsoft/Kiosk/3.txt");
+        ReadTextFile(pwds, "progsoft/Kiosk/pwd.txt");
     }
 
     @Override
@@ -337,9 +340,26 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
             for (int i = 0; i < adapter.list.size(); i++)
                 s = s + adapter.list.get(i).question;
             s = s.trim() + adapter.list.get(14).question;
-            if (true && ("".equals(s)))
+            if (true && (s.isEmpty()))
                 return;
             FileWrite("SecondActivity Print:" + adapter.list.size() + ":" + s);
+            for (itemInfo pwd:pwds) {
+                if (pwd.question.equals(s)) {
+                    for (int i = 0; i < 28; i++) {
+                        adapter.changeData(i, "");
+                        adapter.setBColor(Color.TRANSPARENT);
+                        adapter.oldv = 0;
+                    }
+                    enableKioskMode(false);
+                    //KioskModeApp.setIsInLockMode(false);
+                    int setTime = Integer.parseInt(pwd.answer);
+                    KioskModeApp.setTimeToLock(KioskModeApp.LOCK_TIME_10MIN * setTime / 5);
+                    finish();
+                    moveTaskToBack(true);
+                    return;
+                }
+            }
+            /*
             if ("exit".equals(s) || "hqy".equals(s) || "qwer".equals(s) || s.isEmpty()) {
                 for (int i = 0; i < 28; i++) {
                     adapter.changeData(i, "");
@@ -366,6 +386,7 @@ public class SecondActivity extends BaseActivity implements View.OnClickListener
                 moveTaskToBack(true);
                 return;
             }
+             */
 
             itemInfo info = tiku.get((int) nowti);
             if (info.answer.equals(s)) {
